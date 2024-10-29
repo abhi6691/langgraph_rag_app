@@ -14,15 +14,13 @@ class RetrieveNode(Runnable):
 class GenerateAnswerNode(Runnable):
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-3.5-turbo",
-                          api_key="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                          api_key="sk-*")
 
     def invoke(self, input, config, **kwargs):
-        documents = input.get("documents")
         query = input.get("query")
-        document_text = "\n".join([doc.page_content for doc in documents])
-        prompt = f"Answer the question '{query}' based on the following information:\n\n{document_text}"
+        prompt = f"Answer the question '{query}'"
         # print(prompt)
 
         # Wrap prompt in a HumanMessage for the chat model
         answer = self.llm.invoke([HumanMessage(content=prompt)])
-        return {"answer": answer.content}
+        return {"messages": answer.content}

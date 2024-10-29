@@ -2,33 +2,19 @@ from document_loader import load_and_split_document
 from vector_store import setup_vector_store
 from graph_workflow import create_graph
 
-class ECSInitializer:
-    def __init__(self):
-        self.vector_store = None
-        self.setup_vector_store()
+# Step 1: Load and prepare document chunks
+chunks = load_and_split_document()
 
-    def setup_vector_store(self):
-        if self.vector_store is None:
-            # Initialization logic to be run only once at ECS startup
-            chunks = load_and_split_document()
-            self.vector_store = setup_vector_store(chunks)
+# Step 2: Set up the vector store and retrieval function
+retriever = setup_vector_store(chunks)
 
-    def get_retriever(self):
-        return self.vector_store
+# Step 3: Create and configure the graph workflow with two nodes
+graph = create_graph(retriever)
+app = graph.compile()
 
-# Main processing function that uses the initialized vector store
-def process_query(query, retriever):
-    graph = create_graph(retriever)
-    initial_state = {"query": query}
-    app = graph.compile()
-    return app.invoke(initial_state)
-
-def main():
-    ecs_initializer = ECSInitializer()
-    query = input("Enter your query: ")
-    retriever = ecs_initializer.get_retriever()
-    response = process_query(query, retriever)
-    print("Response:", response)
-
-if __name__ == "__main__":
-    main()
+# Step 4: Test with a sample query
+query = "What is the InvokeAgent request syntax?"
+initial_state = {"query": query}
+response = app.invoke(initial_state)
+print("**********************************************************")
+print("Response:", response["answer"])

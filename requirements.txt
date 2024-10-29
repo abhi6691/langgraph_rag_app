@@ -8,8 +8,4 @@ langchain-openai
 chroma
 chromadb
 langchain-huggingface
-<<<<<<< HEAD
 openai
-=======
-openai
->>>>>>> 741058b (Initial commit, simple RAG app for aws documentation.)
